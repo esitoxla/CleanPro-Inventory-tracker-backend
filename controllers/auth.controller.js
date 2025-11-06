@@ -37,7 +37,7 @@ export const login = async (req, res, next) => {
      res.cookie("jwt", token, {
        httpOnly: true,
        secure: process.env.NODE_ENV === "production", // only https in production
-       sameSite: "strict",
+       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // allows localhost testing
        maxAge: 24 * 60 * 60 * 1000, // 1 day
      });
 
