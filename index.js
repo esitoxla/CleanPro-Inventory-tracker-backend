@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin:[ "http://localhost:5174", "https://cleanpro-inventory-tracker.netlify.app/"],
+    origin:[ "http://localhost:5173", "https://cleanpro-inventory-tracker.netlify.app/"],
     credentials: true,
   })
 );

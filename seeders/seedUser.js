@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../models/auth.model.js";
 
-const new_pass = "1234"
+const new_pass = "12345"
 
 export async function seedUser() {
   const existing = await User.findOne();
