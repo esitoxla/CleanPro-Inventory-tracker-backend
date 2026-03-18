@@ -12,7 +12,7 @@ import { notFound } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorhandling.js";
 import { seedProducts } from "./seeders/seedProducts.js";
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 7005;
 
 const app = express();
 

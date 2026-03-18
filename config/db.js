@@ -2,18 +2,25 @@ import { Sequelize } from "sequelize";
 
 let sequelize;
 
-if (process.env.DATABASE_URL) {
+if (process.env.NODE_ENV === "production") {
   // ===== PRODUCTION (RAILWAY) =====
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: "mysql",
-    logging: false,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
+   sequelize = new Sequelize(
+    process.env.MYSQLDATABASE,
+    process.env.MYSQLUSER,
+    process.env.MYSQLPASSWORD,
+    {
+      host: process.env.MYSQLHOST,
+      port: process.env.MYSQLPORT,
+      dialect: "mysql",
+      logging: false,
+      dialectOptions: {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
       },
-    },
-  });
+    }
+  );
   console.log("Using Railway Database...");
 } else {
   // ===== LOCAL DEVELOPMENT =====
