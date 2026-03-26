@@ -3,26 +3,25 @@ import Product from "./Product.model.js";
 import Production from "./production.model.js";
 import Sale from "./sales.model.js";
 import Expense from "./expense.model.js";
+import User from "./auth.model.js";
 
-// Define all associations here
+
+//USER → PRODUCT
+User.hasMany(Product, { foreignKey: "userId", as: "products" });
+Product.belongsTo(User, { foreignKey: "userId", as: "user" });
+
+// PRODUCT → SALES
 Product.hasMany(Sale, { foreignKey: "productId", as: "sales" });
 Sale.belongsTo(Product, { foreignKey: "productId", as: "product" });
 
+// PRODUCT → PRODUCTION
 Product.hasMany(Production, { foreignKey: "productId", as: "productions" });
 Production.belongsTo(Product, { foreignKey: "productId", as: "product" });
 
+// PRODUCT → EXPENSE
 Product.hasMany(Expense, { foreignKey: "productId", as: "expenses" });
 Expense.belongsTo(Product, { foreignKey: "productId", as: "product" });
 
-export {sequelize, Product, Sale, Production, Expense };
 
-async function syncDatabase() {
-  try {
-    await sequelize.sync({ alter: true }); // or { force: true } during development
-    console.log("All models synchronized ");
-  } catch (error) {
-    console.error("Error syncing database:", error);
-  } 
-}
+export {sequelize, User, Product, Sale, Production, Expense };
 
-syncDatabase()
