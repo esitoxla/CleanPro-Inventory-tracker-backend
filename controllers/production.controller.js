@@ -11,7 +11,7 @@ export const addProduction = async (req, res, next) => {
       return next(error);
     }
 
-    const product = await Product.findByPk(productId);
+    const product = await Product.findOne({ where: { id: productId, userId: req.user.id } });
     if (!product) {
       const error = new Error("Product not found");
       error.statusCode = 404;
@@ -35,7 +35,7 @@ export const addProduction = async (req, res, next) => {
 export const getAllProductions = async (req, res, next) => {
   try {
     const productions = await Production.findAll({
-      include: [{ model: Product, as: "product", attributes: ["name"] }],
+      include: [{ model: Product, as: "product", attributes: ["name"], where: { userId: req.user.id } }],
       order: [["createdAt", "DESC"]],
     });
 
@@ -50,6 +50,14 @@ export const getAllProductions = async (req, res, next) => {
 export const getProductionByProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
+
+    const product = await Product.findOne({ where: { id: productId, userId: req.user.id } });
+    if (!product) {
+      const error = new Error("Product not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
     const productions = await Production.findAll({
       where: { productId },
       include: [{ model: Product, as: "product", attributes: ["name"] }],
@@ -69,6 +77,13 @@ export const deleteLatestProduction = async (req, res, next) => {
   try {
     const { productId } = req.params;
 
+    const product = await Product.findOne({ where: { id: productId, userId: req.user.id } });
+    if (!product) {
+      const error = new Error("Product not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
     // Find the latest record for that product
     const latestProduction = await Production.findOne({
       where: { productId },
@@ -76,10 +91,9 @@ export const deleteLatestProduction = async (req, res, next) => {
     });
 
     if (!latestProduction) {
-      return res.status(404).json({
-        success: false,
-        message: "No production record found to delete",
-      });
+      const error = new Error("No production record found to delete");
+      error.statusCode = 404;
+      return next(error);
     }
 
     await latestProduction.destroy();

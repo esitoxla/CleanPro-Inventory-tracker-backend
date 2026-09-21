@@ -38,7 +38,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync().then(() => {
   app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
   });

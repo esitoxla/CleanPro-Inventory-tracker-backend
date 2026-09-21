@@ -10,7 +10,7 @@ export const addSale = async (req, res, next) => {
       return next(error);
     }
 
-    const product = await Product.findByPk(productId);
+    const product = await Product.findOne({ where: { id: productId, userId: req.user.id } });
     if (!product) {
       const error = new Error("Product not found");
       error.statusCode = 404;
@@ -34,7 +34,7 @@ export const addSale = async (req, res, next) => {
 export const getAllSales = async (req, res, next) => {
   try {
     const sales = await Sale.findAll({
-      include: [{ model: Product, as: "product", attributes: ["name"] }],
+      include: [{ model: Product, as: "product", attributes: ["name"], where: { userId: req.user.id } }],
       order: [["createdAt", "DESC"]], //is used to specify the sorting order for query results. means:
       // Sort by the column createdAt
       // In descending order
@@ -49,6 +49,14 @@ export const getAllSales = async (req, res, next) => {
 export const getSaleByProduct = async (req, res, next) => {
   try {
     const { productId } = req.params;
+
+    const product = await Product.findOne({ where: { id: productId, userId: req.user.id } });
+    if (!product) {
+      const error = new Error("Product not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
     const sales = await Sale.findAll({
       where: { productId },
       include: [{ model: Product, as: "product", attributes: ["name"] }],
@@ -70,16 +78,22 @@ export const deleteLatestSale = async (req, res, next) => {
   try {
     const { productId } = req.params;
 
+    const product = await Product.findOne({ where: { id: productId, userId: req.user.id } });
+    if (!product) {
+      const error = new Error("Product not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
     const latestSale = await Sale.findOne({
       where: { productId },
       order: [["createdAt", "DESC"]],
     });
 
     if (!latestSale) {
-      return res.status(404).json({
-        success: false,
-        message: "No sale record found to delete",
-      });
+      const error = new Error("No sale record found to delete");
+      error.statusCode = 404;
+      return next(error);
     }
 
     await latestSale.destroy();

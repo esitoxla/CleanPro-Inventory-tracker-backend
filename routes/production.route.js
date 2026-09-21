@@ -1,7 +1,10 @@
 import { Router } from "express";
 import { addProduction, deleteLatestProduction, getAllProductions, getProductionByProduct } from "../controllers/production.controller.js";
+import { protectRoutes } from "../middleware/protectRoutes.js";
 
 const router = Router();
+
+router.use(protectRoutes);
 
 router.get("/", getAllProductions);
 

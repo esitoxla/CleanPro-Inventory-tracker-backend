@@ -42,7 +42,7 @@ export const getAllProducts = async (req, res, next) => {
   try {
     const products = await Product.findAll({
       where: { userId: req.user.id },
-      order: [["createdAt", "DESC"]],
+      order: [["createdAt", "ASC"]],
     });
 
     res.status(200).json({

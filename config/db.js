@@ -3,14 +3,14 @@ import { Sequelize } from "sequelize";
 let sequelize;
 
 if (process.env.NODE_ENV === "production") {
-  // ===== PRODUCTION (RAILWAY) =====
-   sequelize = new Sequelize(
-    process.env.MYSQLDATABASE,
-    process.env.MYSQLUSER,
-    process.env.MYSQLPASSWORD,
+  // ===== PRODUCTION (RENDER + AIVEN) =====
+  sequelize = new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
     {
-      host: process.env.MYSQLHOST,
-      port: process.env.MYSQLPORT,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
       dialect: "mysql",
       logging: false,
       dialectOptions: {
@@ -19,15 +19,15 @@ if (process.env.NODE_ENV === "production") {
           rejectUnauthorized: false,
         },
       },
-    }
+    },
   );
-  console.log("Using Railway Database...");
+  console.log("Using Aiven Database...");
 } else {
   // ===== LOCAL DEVELOPMENT =====
   sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
-    process.env.DB_PASS,
+    process.env.DB_PASSWORD,
     {
       host: process.env.DB_HOST,
       dialect: "mysql",

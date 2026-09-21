@@ -8,7 +8,7 @@ export const addExpense = async (req, res, next) => {
 
     if (!productId || !description || !amount) {
       const error = new Error(
-        "Product ID, description, and amount are required"
+        "Product ID, description, and amount are required",
       );
       error.statusCode = 400;
       return next(error);
@@ -32,7 +32,6 @@ export const addExpense = async (req, res, next) => {
   }
 };
 
-
 export const getAllExpenses = async (req, res, next) => {
   try {
     const expenses = await Expense.findAll({
@@ -45,7 +44,6 @@ export const getAllExpenses = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export const getExpenseByProduct = async (req, res, next) => {
   try {
@@ -68,7 +66,6 @@ export const getExpenseByProduct = async (req, res, next) => {
     next(error);
   }
 };
-
 
 //this will delete the expense of a particular product
 export const deleteExpense = async (req, res, next) => {
@@ -102,8 +99,6 @@ export const deleteExpense = async (req, res, next) => {
   }
 };
 
-
-
 export const getExpenseSummary = async (req, res, next) => {
   try {
     const expenses = await Expense.findAll({
@@ -116,18 +111,12 @@ export const getExpenseSummary = async (req, res, next) => {
           model: Product,
           as: "product",
           attributes: ["name"],
+          where: { userId: req.user.id },
         },
       ],
       group: ["productId", "product.id"],
       order: [["productId", "ASC"]],
     });
-
-    if (!expenses.length) {
-      return res.status(404).json({
-        success: false,
-        message: "No expenses found",
-      });
-    }
 
     const summary = expenses.map((exp) => ({
       product: exp.product.name,
@@ -140,6 +129,32 @@ export const getExpenseSummary = async (req, res, next) => {
       success: true,
       data: summary,
       total: overallTotal,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteLatestExpense = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+
+    const latest = await Expense.findOne({
+      where: { productId },
+      order: [["createdAt", "DESC"]],
+    });
+
+    if (!latest) {
+      const error = new Error("No expenses found for this product");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    await latest.destroy();
+
+    res.status(200).json({
+      success: true,
+      message: "Latest expense deleted successfully",
     });
   } catch (error) {
     next(error);
