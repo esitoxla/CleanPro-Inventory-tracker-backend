@@ -37,15 +37,4 @@ if (process.env.NODE_ENV === "production") {
   console.log("Using Local Database...");
 }
 
-async function testConnection() {
-  try {
-    await sequelize.authenticate();
-    console.log("MySQL connected successfully!");
-  } catch (error) {
-    console.error("Unable to connect to MySQL:", error);
-  }
-}
-
-testConnection();
-
 export default sequelize;

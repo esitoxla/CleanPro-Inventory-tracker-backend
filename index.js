@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import sequelize from "./config/db.js";
-import { seedUser } from "./seeders/seedUser.js";
 import authRoute from "./routes/auth.route.js"
 import productionRoute from "./routes/production.route.js"
 import expenseRoute from "./routes/expense.route.js"
@@ -10,7 +9,7 @@ import saleRoute from "./routes/sale.route.js"
 import productRoute from "./routes/product.route.js"
 import { notFound } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorhandling.js";
-import { seedProducts } from "./seeders/seedProducts.js";
+
 
 const PORT = process.env.PORT || 7005;
 
@@ -38,8 +37,18 @@ app.use(notFound);
 app.use(errorHandler);
 
 
-sequelize.sync().then(() => {
-  app.listen(PORT, () => {
-    console.log(`App listening on port ${PORT}`);
-  });
-});
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connected");
+
+    app.listen(PORT, () => {
+      console.log(`App is listening on ${PORT}`);
+    });
+  } catch (err) {
+    console.error("Startup failed:", err);
+    process.exit(1);
+  }
+};
+
+startServer();
