@@ -10,7 +10,7 @@ const Production = sequelize.define(
       allowNull: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true, tableName: "productions" },
 );
 
 

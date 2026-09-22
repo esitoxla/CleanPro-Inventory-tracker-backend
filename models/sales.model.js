@@ -10,7 +10,7 @@ const Sale = sequelize.define(
       allowNull: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true, tableName: "sales" },
 );
 
 
