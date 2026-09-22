@@ -2,33 +2,39 @@ import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
 import bcrypt from "bcrypt";
 
-const User = sequelize.define("User", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  firstName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  lastName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  phoneNumber: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      is: /^[0-9]{10}$/, // Ghana format
+const User = sequelize.define(
+  "User",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    phoneNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        is: /^[0-9]{10}$/, // Ghana format
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  {
+    tableName: "users",
   },
-});
+);
 
 //before validating phonenumber
 User.beforeValidate((user) => {
